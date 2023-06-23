@@ -1,6 +1,11 @@
+from datetime import date, timedelta
+
 import pytest
+from django.conf import settings
 
 from ..models import News, Comment
+
+COMMENTS_FOR_NEWS = 15
 
 
 @pytest.fixture
@@ -21,12 +26,41 @@ def news_pk_for_args(news):
 @pytest.fixture
 def comment(author, news):
     """Создаём объект комментария к новости."""
-    news = Comment.objects.create(
+    comment = Comment.objects.create(
         news=news,
         author=author,
         text='Текст комментария',
     )
-    return news
+    return comment
+
+
+@pytest.fixture
+def all_news(author):
+    day = timedelta(days=1)
+    start_date = date(2000, 1, 1)
+    news_list = [
+        News(
+            title=f'Заголовок_{i}',
+            text='Текст заметки',
+            date=start_date+day*i,  # каждый день публикуем новую запись
+        )
+        for i in range(settings.NEWS_COUNT_ON_HOME_PAGE + 1)  # делаем новостей заведомо больше, чем может поместиться на странице
+    ]
+    News.objects.bulk_create(news_list)
+
+    return news_list
+
+
+@pytest.fixture
+def all_comments_for_news(author, news):
+    """Создаём объект комментария к новости."""
+    comments_list = [
+        Comment(news=news, author=author, text=f'Текст комментария {i}',)
+        for i in range(COMMENTS_FOR_NEWS)
+    ]
+    Comment.objects.bulk_create(comments_list)
+
+    return comments_list
 
 
 @pytest.fixture
