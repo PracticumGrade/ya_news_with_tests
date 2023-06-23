@@ -20,6 +20,8 @@ pytestmark = [
 
 
 class TestCommentEditDelete:
+    # Обновленный текст комментария понадобится в нескольких местах кода,
+    # поэтому запишем его в атрибуты класса.
     NEW_COMMENT_TEXT = 'Обновленный текст комментария'
 
     @pytest.fixture
@@ -39,6 +41,7 @@ class TestCommentEditDelete:
 
     @pytest.fixture
     def delete_url(self, news_pk_for_args):
+        """URL для удаления."""
         return reverse('news:delete', args=news_pk_for_args)
 
     @pytest.fixture
@@ -113,6 +116,7 @@ class TestCommentCreation:
 
     @pytest.fixture
     def form_data(self):
+        """Формируем данные для POST-запроса по созданию комментария."""
         return {'text': self.COMMENT_TEXT}
 
     def test_user_cant_use_bad_words(self, auth_client, url):

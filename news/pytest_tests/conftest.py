@@ -20,11 +20,13 @@ def news():
 
 @pytest.fixture
 def news_pk_for_args(news):
+    """Фикстура для получения позиционных аргументов для разрешения url по имени"""
     return news.pk,
 
 
 @pytest.fixture
 def comment_text():
+    """Текст комментария нужен будет в нескольких местах, поэтому вынесен в отдельную фикстуру."""
     return 'Текст комментария'
 
 
@@ -41,20 +43,23 @@ def comment(author, news, comment_text):
 
 @pytest.fixture
 def comment_pk_for_args(comment):
+    """Фикстура для получения позиционных аргументов для разрешения url по имени"""
     return comment.pk,
 
 
 @pytest.fixture
 def all_news(author):
+    """Список всех новостей. Список новостей делаем заведомо больше, чем может поместиться на странице."""
     day = timedelta(days=1)
     start_date = date(2000, 1, 1)
+
     news_list = [
         News(
             title=f'Заголовок_{i}',
             text='Текст заметки',
             date=start_date+day*i,  # каждый день публикуем новую запись
         )
-        for i in range(settings.NEWS_COUNT_ON_HOME_PAGE + 1)  # делаем новостей заведомо больше, чем может поместиться на странице
+        for i in range(settings.NEWS_COUNT_ON_HOME_PAGE + 1)
     ]
     News.objects.bulk_create(news_list)
 
