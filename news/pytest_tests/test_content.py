@@ -20,13 +20,13 @@ class TestNewsDetailPage:
     NEWS_DETAIL_NAME = 'news:detail'
 
     @pytest.mark.parametrize(
-        'user_client, form_in_context',
+        'parametrized_client, form_in_context',
         (
-                (pytest.lazy_fixture('client'), False),
-                (pytest.lazy_fixture('author_client'), True),
+            (pytest.lazy_fixture('client'), False),
+            (pytest.lazy_fixture('author_client'), True),
         )
     )
-    def test_pages_contains_form(self, user_client, form_in_context, news_pk_for_args):
+    def test_pages_contains_form(self, parametrized_client, form_in_context, news_pk_for_args):
         """
         - Анонимному пользователю недоступна форма для отправки комментария на странице отдельной новости,
             а авторизованному доступна.
@@ -34,7 +34,7 @@ class TestNewsDetailPage:
         # Формируем URL.
         url = reverse(self.NEWS_DETAIL_NAME, args=news_pk_for_args)
         # Запрашиваем нужную страницу:
-        response = user_client.get(url)
+        response = parametrized_client.get(url)
         # Проверяем, есть ли объект формы в словаре контекста:
         assert ('form' in response.context) is form_in_context
 
