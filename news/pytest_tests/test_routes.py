@@ -55,13 +55,13 @@ def test_pages_availability_for_anonymous_user(client, name, args):
         'news:delete'
     ),
 )
-def test_pages_availability_for_author(parametrized_client, expected_status, name, comment):
+def test_pages_availability_for_author(parametrized_client, expected_status, name, comment_pk_for_args):
     """
     - Страницы удаления и редактирования комментария доступны автору комментария.
     - Авторизованный пользователь не может зайти на страницы редактирования или удаления
         чужих комментариев (возвращается ошибка 404).
     """
-    url = reverse(name, args=(comment.pk,))
+    url = reverse(name, args=comment_pk_for_args)
     response = parametrized_client.get(url)
     assert response.status_code == expected_status
 
@@ -73,13 +73,13 @@ def test_pages_availability_for_author(parametrized_client, expected_status, nam
         'news:delete'
     ),
 )
-def test_redirects_for_anonymous_user(client, name, news):
+def test_redirects_for_anonymous_user(client, name, news_pk_for_args):
     """
     - При попытке перейти на страницу редактирования или удаления комментария анонимный пользователь
         перенаправляется на страницу авторизации.
     """
     login_url = reverse('users:login')
-    url = reverse(name, args=(news.pk,))
+    url = reverse(name, args=news_pk_for_args)
 
     expected_url = f'{login_url}?next={url}'
     response = client.get(url)

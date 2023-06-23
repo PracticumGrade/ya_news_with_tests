@@ -24,14 +24,24 @@ def news_pk_for_args(news):
 
 
 @pytest.fixture
-def comment(author, news):
+def comment_text():
+    return 'Текст комментария'
+
+
+@pytest.fixture
+def comment(author, news, comment_text):
     """Создаём объект комментария к новости."""
     comment = Comment.objects.create(
         news=news,
         author=author,
-        text='Текст комментария',
+        text=comment_text,
     )
     return comment
+
+
+@pytest.fixture
+def comment_pk_for_args(comment):
+    return comment.pk,
 
 
 @pytest.fixture
@@ -84,4 +94,16 @@ def reader(django_user_model):
 @pytest.fixture
 def reader_client(reader, client):  # Вызываем фикстуру читателя и клиента.
     client.force_login(reader)  # Логиним читателя в клиенте.
+    return client
+
+
+@pytest.fixture
+def auth_user(django_user_model):
+    auth_user = django_user_model.objects.create(username='auth_user')
+    return auth_user
+
+
+@pytest.fixture
+def auth_client(auth_user, client):
+    client.force_login(auth_user)  # Логиним пользователя в клиенте.
     return client
